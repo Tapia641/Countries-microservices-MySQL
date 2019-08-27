@@ -8,3 +8,4 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
       ddl-auto: none
+      use-new-id-generator-mappings: false
