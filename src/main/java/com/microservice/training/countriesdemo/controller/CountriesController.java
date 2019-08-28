@@ -19,31 +19,41 @@ import com.microservice.training.countriesdemo.model.entity.CountryEntity;
 import com.microservice.training.countriesdemo.repository.api.CountryJpaRepository;
 import com.microservice.training.countriesdemo.service.api.ICountriesService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CountriesController {
 
-  @Autowired
-  ICountriesService countriesService;
+//  @Autowired
+//  ICountriesService countriesService;
 
-  @GetMapping(path = "/api/countries/continent/name/{continentName}")
-  public ResponseEntity<List<Country>> findCountryByContinent(@PathVariable String continentName) {
-    return new ResponseEntity<List<Country>>(
-        countriesService.findCountriesByContinentName(continentName), HttpStatus.OK);
-  }
-  
-  @GetMapping(path = "/api/countries/continent/id/{continentId}")
-  public ResponseEntity<List<Country>> findCountryByContinent(@PathVariable Integer continentId) {
-    return new ResponseEntity<List<Country>>(
-        countriesService.findCountriesByContinentId(continentId), HttpStatus.OK);
-  }
-  
-  
   // Bean llamando a CountryRepository para poder usar sus funciones
   @Autowired
   CountryJpaRepository countryRepository;
   
+  @GetMapping(path="/api/countries/all")
+  public @ResponseBody Iterable<CountryEntity> getAllCountries() {
+		return countryRepository.findAll();
+	}
+  
+  @GetMapping(path = "/api/countries/continent/name/{continentName}")
+  public @ResponseBody List<CountryEntity> findCountryByContinent(@PathVariable String continentName) {
+	  List<CountryEntity> countriesList = (List<CountryEntity>) countryRepository.findAll(), auxList = new ArrayList<CountryEntity>();
+	  for (CountryEntity country : countriesList) {
+		if (country.getContinent().equals(continentName.toLowerCase())) {
+			auxList.add(country);
+		}
+	  }
+	  return auxList;
+  }
+  
+  @GetMapping(path = "/api/countries/continent/id/{continentId}")
+  public @ResponseBody Optional<CountryEntity> findCountryByContinent(@PathVariable Integer continentId) {
+    return countryRepository.findById(continentId);
+  }
+    
   @RequestMapping(value="/api/countries/addCountry", method= {RequestMethod.GET,RequestMethod.POST})
   public String addCountry(
 		// @RequestParam Puede ser GET o POST request

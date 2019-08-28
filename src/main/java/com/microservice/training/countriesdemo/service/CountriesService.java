@@ -3,6 +3,7 @@ package com.microservice.training.countriesdemo.service;
 import com.microservice.training.countriesdemo.errorhandling.InvalidContinentException;
 import com.microservice.training.countriesdemo.model.Continent;
 import com.microservice.training.countriesdemo.model.Country;
+import com.microservice.training.countriesdemo.repository.api.CountryJpaRepository;
 import com.microservice.training.countriesdemo.repository.api.ICountriesRepository;
 import com.microservice.training.countriesdemo.service.api.ICountriesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,11 @@ public class CountriesService implements ICountriesService {
 
   @Autowired
   ICountriesRepository countriesRepository;
+  CountryJpaRepository countryRepository;
   
   public List<Country> findCountriesByContinentName(String continentName) {
     Continent continent = Continent.continentByName(continentName);
+    
     switch (continent) {
       case EUROPE:
         return countriesRepository.findAllEuropeCountries();
